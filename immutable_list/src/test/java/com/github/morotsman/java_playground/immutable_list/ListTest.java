@@ -88,6 +88,8 @@ public class ListTest {
     
     //test with many elements!!!
     
+    //test covarians and contravariance
+    
     
     
 }
