@@ -18,7 +18,7 @@ public abstract class List<T> {
     
     public abstract boolean isEmpty();
     
-    public abstract <R> List<R> map(Function<T,R> fun);
+    public abstract <R> List<R> map(Function<? super T,? extends R> fun);
     
     
 }

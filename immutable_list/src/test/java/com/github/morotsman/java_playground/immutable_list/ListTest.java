@@ -1,12 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.github.morotsman.java_playground.immutable_list;
 
-import java.util.stream.Stream;
-import junit.framework.Assert;
+import java.util.function.Function;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -14,10 +8,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author niklasleopold
- */
 public class ListTest {
     
     public ListTest() {
@@ -80,15 +70,90 @@ public class ListTest {
         assertEquals(test,List.of());
     }    
 
-     @Test
+    @Test
     public void mapOnAListWithOneElement() {
         List<Integer> test = List.of("one").map(a -> a.length());
         assertEquals(test,List.of(3));
     }   
     
-    //test with many elements!!!
+     @Test
+    public void mapOnAListWithThreeElements() {
+        List<Integer> test = List.of("one","two","three").map(a -> a.length());
+        assertEquals(test,List.of(3,3,5));
+    }   
     
-    //test covarians and contravariance
+    private class Fruit {}
+    
+    private class CitrusFruit extends Fruit {
+        @Override
+        public boolean equals(Object other) {
+            return this.getClass() == other.getClass();
+        }
+    }
+    
+    private class Lemmon extends CitrusFruit {
+        @Override
+        public boolean equals(Object other) {
+            return this.getClass() == other.getClass();
+        }
+    }
+    
+    private class Orange extends CitrusFruit {
+        @Override
+        public boolean equals(Object other) {
+            System.out.println(this.getClass() + " " + other.getClass());
+            return this.getClass() == other.getClass();
+        }
+    }
+    
+    private class Apple extends Fruit {
+        @Override
+        public boolean equals(Object other) {
+            return this.getClass() == other.getClass();
+        }   
+    }
+    
+    private class GrannySmith extends Apple {
+        @Override
+        public boolean equals(Object other) {
+            return this.getClass() == other.getClass();
+        }   
+    }
+    
+    @Test
+    public void theListIsInvariant() {
+        Apple myApple = new Apple();
+        Fruit myFruit = myApple;
+        
+        List<Apple> apples = List.of(myApple);
+        //List<Fruit> fruits1 = apples;//does not compile
+        List<? extends Fruit> fruits2 = apples;
+        assertEquals(fruits2,List.of(myApple));
+    }
+    
+    @Test
+    public void mapAcceptsContravariantInputToAFunctionAndCovariantOutputFromAFunction() {
+        List<Orange> oranges = List.of(new Orange());
+        
+        Function<Orange,Apple> invariantConverter = (Orange o) -> new Apple();
+        List<Apple> apples = oranges.map(invariantConverter);
+        assertEquals(apples,List.of(new Apple()));
+        
+        Function<Fruit,Apple> contravariantInputConverter = (Fruit f) -> new Apple();
+        apples = oranges.map(contravariantInputConverter);
+        assertEquals(apples,List.of(new Apple()));
+   
+        Function<Orange,GrannySmith> covariantOutputConverter = (Orange o) -> new GrannySmith();
+        apples = List.of(new Orange()).map(covariantOutputConverter);
+        assertEquals(apples,List.of(new GrannySmith()));  
+        
+        Function<Fruit,GrannySmith> contravariantAndCovariantConverter = (Fruit f) -> new GrannySmith();
+        apples = List.of(new Orange()).map(contravariantAndCovariantConverter);
+        assertEquals(apples,List.of(new GrannySmith()));
+    } 
+    
+    //test with many elements!!!
+   
     
     
     
