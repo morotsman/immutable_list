@@ -1,6 +1,8 @@
 package com.github.morotsman.java_playground.immutable_list;
 
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -152,7 +154,36 @@ public class ListTest {
         assertEquals(apples,List.of(new GrannySmith()));
     } 
     
-    //test with many elements!!!
+    private List<Integer> listOfSize(int size) {
+        Integer[] elements = new Integer[size];
+        for(int i = 0; i < size; i++) {
+            elements[i] = new Integer(i);
+        }
+        return List.of(elements);
+    }
+    
+    @Test
+    public void testForStackOverFlow() {
+        listOfSize(8000).map(i -> i*2);
+    }
+    
+    
+    @Test
+    public void addOranges() {
+        List<Orange> oranges = List.of(new Orange());
+        List<Orange> moreOranges = oranges.prepend(new Orange());
+        assertEquals(oranges,List.of(new Orange()));
+        assertEquals(moreOranges,List.of(new Orange(), new Orange()));
+    }
+    
+    
+    @Test
+    public void addLemmonToCitrus() {
+        List<CitrusFruit> citrusFruits = List.of(new Orange());
+        List<CitrusFruit> moreCitrusFruits = citrusFruits.prepend(new Lemmon());
+        assertEquals(citrusFruits,List.of(new Orange()));
+        assertEquals(moreCitrusFruits,List.of(new Lemmon(), new Orange()));
+    }       
    
     
     

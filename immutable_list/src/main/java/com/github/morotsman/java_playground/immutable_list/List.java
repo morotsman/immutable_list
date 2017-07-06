@@ -16,9 +16,20 @@ public abstract class List<T> {
         return result;
     }
     
+
+    
     public abstract boolean isEmpty();
     
     public abstract <R> List<R> map(Function<? super T,? extends R> fun);
+    
+    public List<T> prepend(T value) {
+        return new Cons(value,this);
+    }
+    
+    public List<T> append(T value) {
+        if(this.isEmpty()) return List.of(value);
+        return null;
+    }
     
     
 }
