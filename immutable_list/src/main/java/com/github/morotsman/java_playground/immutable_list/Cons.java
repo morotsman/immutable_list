@@ -1,13 +1,13 @@
 package com.github.morotsman.java_playground.immutable_list;
 
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.Optional;
 
 
-public class Cons<T> extends List<T> {
+class Cons<T> extends List<T> {
     
-    final T value;
-    final List<T> tail;
+    private final T value;
+    private final List<T> tail;
     
     public Cons(final T value, final List<T> tail) {
         this.value = value;
@@ -19,11 +19,6 @@ public class Cons<T> extends List<T> {
         return false;
     }    
 
-    @Override
-    public List map(Function fun) {
-        return new Cons(fun.apply(value), tail.map(fun));
-    }
-    
     @Override
     public int hashCode() {
         int hash = 5;
@@ -52,5 +47,17 @@ public class Cons<T> extends List<T> {
     public String toString() {
         return "Cons{" + "value=" + value + ", tail=" + tail + '}';
     } 
+
+    @Override
+    public Optional<T> head() {
+        return Optional.of(value);
+    }
+
+    @Override
+    public List<T> tail() {
+        return tail;
+    }
+
+
     
 }

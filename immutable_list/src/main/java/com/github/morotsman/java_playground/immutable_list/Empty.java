@@ -1,14 +1,19 @@
 package com.github.morotsman.java_playground.immutable_list;
 
-import java.util.function.Function;
+import java.util.Optional;
 
 
-public class Empty<T> extends List<T> {
+class Empty<T> extends List<T> {
 
     @Override
     public boolean isEmpty() {
         
         return true;
+    }
+    
+    @Override
+    public Optional<T> head() {
+        return Optional.empty();
     }
     
     @Override
@@ -23,14 +28,16 @@ public class Empty<T> extends List<T> {
     }
 
     @Override
-    public List map(Function fun) {
-        return this;
-    }
-
-    @Override
     public String toString() {
         return "Empty{" + '}';
     }
+
+    @Override
+    public List<T> tail() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+
     
     
     

@@ -1,8 +1,11 @@
 package com.github.morotsman.java_playground.immutable_list;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -164,7 +167,7 @@ public class ListTest {
     
     @Test
     public void testForStackOverFlow() {
-        listOfSize(8000).map(i -> i*2);
+        listOfSize(80000).map(i -> i*2);
     }
     
     
@@ -185,6 +188,41 @@ public class ListTest {
         assertEquals(moreCitrusFruits,List.of(new Lemmon(), new Orange()));
     }       
    
+    
+    @Test
+    public void testReduce() {
+        int result = List.of(1,2,3).reduce(0, (a,b) -> a+b); 
+        assertEquals(6,result);
+    }
+    
+    @Test
+    public void testConcat() {
+        List<Integer> result = List.of(1,2,3).concat(List.of(4,5,6));
+        assertEquals(List.of(4,5,6,1,2,3),result);
+    }
+    
+    @Test
+    public void testFlatMap() {
+        List<Integer> result = List.of(1,2,3).flatMap(a -> List.of(a,a)); 
+        assertEquals(List.of(1,1,2,2,3,3),result);
+    }
+    
+    @Test
+    public void testFilter() {
+        List<Integer> result = List.of(1,2,3).filter(a -> a >=2); 
+        assertEquals(List.of(2,3),result);
+    }
+    
+    @Test
+    public void testGroupBy() {
+        Map<Integer,List<Integer>> result = List.of(1,2,3,4,3,2).groupBy(a -> a); 
+        Map<Integer,List<Integer>> expected = new HashMap<>();
+        expected.put(1,List.of(1));
+        expected.put(2,List.of(2,2));
+        expected.put(3,List.of(3,3));
+        expected.put(4,List.of(4));
+        assertEquals(expected,result);
+    }
     
     
     
