@@ -1,5 +1,6 @@
 package com.github.morotsman.java_playground.immutable_list;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -16,6 +17,16 @@ public abstract class List<T> {
         
         for(int i = items.length-1; i > -1; i--) {
             result = new Cons(items[i], result);
+        }
+                
+        return result;
+    }
+    
+    public static <T> List<T> of(final java.util.List items) {
+        List result = new Empty();
+        
+        for(int i = items.size()-1; i > -1; i--) {
+            result = new Cons(items.get(i), result);
         }
                 
         return result;
@@ -39,7 +50,7 @@ public abstract class List<T> {
         }       
     }
    
-    public <U> U reduce(final U identity, final BiFunction<U, ? super T, U> fun) {
+    public <U> U reduce(final U identity, final BiFunction<? super U, ? super T, ? extends U> fun) {
         List<T> current = this;
         U result = identity;
         while(!current.isEmpty()) {
@@ -57,9 +68,21 @@ public abstract class List<T> {
         return reduce(List.of(), (rs,t) -> new Cons(fun.apply(t), rs)).reverse();
     }
     
-    public <U> List<U> flatMap(final Function<? super T, List<? extends U>> fun) {
-        final List<U> result =  reduce(List.of(), (us,t) -> us.concat(fun.apply(t)));
-        return result.reverse();
+    //This implementation is faster but uglier (check the compareTest in the junit), with List with more then 100000 elements we start to see a difference.
+    //I still use reduce and reverse to implement this and the other operations since I write this for fun and have no ambition to use this code in production.
+    //In production is better to use java.util.Stream since it may be run in parallell + it's lazy
+    public <R> List<R> mapImplementedWithArrayList(final Function<? super T,? extends R> fun) {
+        java.util.List<R> accumulator = new ArrayList<>(); 
+        List<T> current = this;
+        while(!current.isEmpty()) {
+            accumulator.add(fun.apply(current.head().get()));
+            current = current.tail();
+        }
+        return List.of(accumulator);
+    }
+    
+    public <U> List<U> flatMap(final Function<? super T, ? extends List<? extends U>> fun) {
+        return reverse().reduce(List.of(), (us,t) -> us.concat(fun.apply(t)));
     }
     
     public List<T> concat(final List<? extends T> elements) {
