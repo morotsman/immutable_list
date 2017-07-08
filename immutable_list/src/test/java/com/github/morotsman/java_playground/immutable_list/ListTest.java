@@ -4,8 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -106,13 +105,28 @@ public class ListTest {
         assertEquals(test,List.of(3,3,5));
     }       
     
-    private class Fruit {}
+    private class Fruit {
+
+        @Override
+        public String toString() {
+            return "Fruit";
+        }
+    
+        
+    }
     
     private class CitrusFruit extends Fruit {
         @Override
         public boolean equals(Object other) {
             return this.getClass() == other.getClass();
         }
+
+        @Override
+        public String toString() {
+            return "CitrusFruit";
+        }
+        
+        
     }
     
     private class Lemmon extends CitrusFruit {
@@ -120,28 +134,53 @@ public class ListTest {
         public boolean equals(Object other) {
             return this.getClass() == other.getClass();
         }
+
+        @Override
+        public String toString() {
+            return "Lemmon";
+        }
+        
+        
     }
     
     private class Orange extends CitrusFruit {
         @Override
         public boolean equals(Object other) {
-            System.out.println(this.getClass() + " " + other.getClass());
             return this.getClass() == other.getClass();
         }
+
+        @Override
+        public String toString() {
+            return "Orange";
+        }
+        
     }
     
     private class Apple extends Fruit {
         @Override
         public boolean equals(Object other) {
             return this.getClass() == other.getClass();
-        }   
+        }
+
+        @Override
+        public String toString() {
+            return "Apple";
+        }
+        
+        
     }
     
     private class GrannySmith extends Apple {
         @Override
         public boolean equals(Object other) {
             return this.getClass() == other.getClass();
-        }   
+        }
+
+        @Override
+        public String toString() {
+            return "GrannySmith";
+        }
+        
     }
     
     @Test
@@ -314,6 +353,23 @@ public class ListTest {
     public void testConcat() {
         List<Integer> result = List.of(1,2,3).concat(List.of(4,5,6));
         assertEquals(List.of(4,5,6,1,2,3),result);
+        
+        result = List.<Integer>of().concat(List.of(4,5,6));
+        assertEquals(List.of(4,5,6),result);
+        
+        result = List.of(1,2,3).concat(List.of());
+        assertEquals(List.of(1,2,3),result);
+        
+        result = List.<Integer>of().concat(List.of());
+        assertEquals(List.of(),result);
+        
+        result = List.of(1).concat(List.of());
+        assertEquals(List.of(1),result);
+        
+        result = List.<Integer>of().concat(List.of(1));
+        assertEquals(List.of(1),result);
+        
+        List<Fruit> fruits = List.<Fruit>of(new Orange()).concat(List.of(new Apple())); 
     }
     
 
@@ -322,6 +378,19 @@ public class ListTest {
     public void testFilter() {
         List<Integer> result = List.of(1,2,3).filter(a -> a >=2); 
         assertEquals(List.of(2,3),result);
+        
+        result = List.<Integer>of().filter(a -> a >=2); 
+        assertEquals(List.of(),result);
+        
+        result = List.of(1).filter(a -> a >=2); 
+        assertEquals(List.of(),result);
+        
+        result = List.of(2).filter(a -> a >=2); 
+        assertEquals(List.of(2),result);
+        
+        Predicate<Number> fun = (Number number) -> number.intValue() == 1;
+        result = List.of(1,2,1).filter(fun);
+        assertEquals(List.of(1,1),result);
     }
     
     @Test
@@ -333,7 +402,24 @@ public class ListTest {
         expected.put(3,List.of(3,3));
         expected.put(4,List.of(4));
         assertEquals(expected,result);
+        
+        result = List.<Integer>of().groupBy(Function.identity()); 
+        expected = new HashMap<>();
+        assertEquals(expected,result);
+        
+        result = List.of(1).groupBy(Function.identity()); 
+        expected = new HashMap<>();
+        expected.put(1,List.of(1));
+        assertEquals(expected,result);
+        
+        Function<Object,String> fun = (Object o) -> o.toString();
+        Map<Object,List<CitrusFruit>> result2 = List.<CitrusFruit>of(new Orange(),new Lemmon(), new Orange()).groupBy(fun);
+        Map<Object,List<CitrusFruit>> expected2 = new HashMap<>();
+        expected2.put("Orange", List.of(new Orange(), new Orange()));
+        expected2.put("Lemmon", List.of(new Lemmon()));
+        assertEquals(expected2,result2);
     }
+    
     
     
     

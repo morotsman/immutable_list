@@ -22,6 +22,8 @@ class Cons<T> extends List<T> {
     @Override
     public int hashCode() {
         int hash = 5;
+        hash = 29 * hash + Objects.hashCode(this.value);
+        hash = 29 * hash + Objects.hashCode(this.tail);
         return hash;
     }
 
@@ -42,6 +44,9 @@ class Cons<T> extends List<T> {
         }
         return true;
     }
+
+    
+    
 
     @Override
     public String toString() {

@@ -50,7 +50,7 @@ public abstract class List<T> {
         }       
     }
    
-    public <U> U reduce(final U identity, final BiFunction<? super U, ? super T, ? extends U> fun) {
+    public <U> U reduce(final U identity, final BiFunction<U, ? super T, U> fun) {
         List<T> current = this;
         U result = identity;
         while(!current.isEmpty()) {
